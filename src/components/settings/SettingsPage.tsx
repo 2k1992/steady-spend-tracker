@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import GoalsManager from '@/components/goals/GoalsManager';
 import { useTheme } from '@/components/providers/theme-provider';
+import { Transaction } from '@/types/transaction';
 import { storage } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -17,7 +19,11 @@ import {
   FileText
 } from 'lucide-react';
 
-const SettingsPage: React.FC = () => {
+interface SettingsPageProps {
+  transactions: Transaction[];
+}
+
+const SettingsPage: React.FC<SettingsPageProps> = ({ transactions }) => {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -99,6 +105,15 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Goals Section */}
+      <Card className="shadow-card">
+        <CardHeader>
+          <CardTitle>Goals & Budgets</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <GoalsManager transactions={transactions} />
+        </CardContent>
+      </Card>
       <Card className="shadow-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

@@ -24,3 +24,14 @@ export interface Balance {
   totalExpenses: number;
   netBalance: number;
 }
+
+export interface Goal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  categoryId?: string; // undefined for overall goal
+  period: 'monthly' | 'weekly' | 'yearly';
+  startDate: Date;
+  endDate: Date;
+}

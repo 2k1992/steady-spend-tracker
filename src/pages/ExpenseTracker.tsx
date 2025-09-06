@@ -53,7 +53,7 @@ const ExpenseTracker: React.FC = () => {
       case 'dashboard':
         return (
           <div className="space-y-6">
-            <BalanceCard balance={balance} />
+            <BalanceCard balance={balance} transactions={transactions} />
             <RecentTransactions 
               transactions={transactions}
               onViewAll={() => setActiveTab('transactions')}
@@ -75,7 +75,7 @@ const ExpenseTracker: React.FC = () => {
         );
       
       case 'settings':
-        return <SettingsPage />;
+        return <SettingsPage transactions={transactions} />;
       
       default:
         return <div>Page not found</div>;

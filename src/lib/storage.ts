@@ -1,8 +1,9 @@
-import { Transaction, Category } from '@/types/transaction';
+import { Transaction, Category, Goal } from '@/types/transaction';
 
 const STORAGE_KEYS = {
   TRANSACTIONS: 'expense-tracker-transactions',
   CATEGORIES: 'expense-tracker-categories',
+  GOALS: 'expense-tracker-goals',
 } as const;
 
 export const storage = {
@@ -76,13 +77,61 @@ export const storage = {
     this.saveCategories(categories);
   },
 
+  // Goals
+  getGoals(): Goal[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.GOALS);
+      if (!data) return [];
+      
+      const goals = JSON.parse(data);
+      return goals.map((g: any) => ({
+        ...g,
+        startDate: new Date(g.startDate),
+        endDate: new Date(g.endDate),
+      }));
+    } catch {
+      return [];
+    }
+  },
+
+  saveGoals(goals: Goal[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.GOALS, JSON.stringify(goals));
+    } catch (error) {
+      console.error('Failed to save goals:', error);
+    }
+  },
+
+  addGoal(goal: Goal): void {
+    const goals = this.getGoals();
+    goals.push(goal);
+    this.saveGoals(goals);
+  },
+
+  updateGoal(id: string, updates: Partial<Goal>): void {
+    const goals = this.getGoals();
+    const index = goals.findIndex(g => g.id === id);
+    if (index !== -1) {
+      goals[index] = { ...goals[index], ...updates };
+      this.saveGoals(goals);
+    }
+  },
+
+  deleteGoal(id: string): void {
+    const goals = this.getGoals();
+    const filtered = goals.filter(g => g.id !== id);
+    this.saveGoals(filtered);
+  },
+
   // Backup and Restore
   exportData(): string {
     const transactions = this.getTransactions();
     const categories = this.getCategories();
+    const goals = this.getGoals();
     const data = {
       transactions,
       categories,
+      goals,
       exportDate: new Date().toISOString(),
       version: '1.0'
     };
@@ -105,6 +154,16 @@ export const storage = {
 
       this.saveTransactions(transactions);
       this.saveCategories(data.categories);
+      
+      // Import goals if they exist
+      if (data.goals) {
+        const goals = data.goals.map((g: any) => ({
+          ...g,
+          startDate: new Date(g.startDate),
+          endDate: new Date(g.endDate),
+        }));
+        this.saveGoals(goals);
+      }
       
       return { success: true, message: 'Data imported successfully' };
     } catch (error) {
