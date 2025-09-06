@@ -1,4 +1,4 @@
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = 'income' | 'expense' | 'lent' | 'borrowed';
 
 export interface Category {
   id: string;

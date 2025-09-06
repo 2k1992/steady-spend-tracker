@@ -6,8 +6,7 @@ import AddTransactionForm from '@/components/transactions/AddTransactionForm';
 import TransactionList from '@/components/transactions/TransactionList';
 import { Transaction, Balance } from '@/types/transaction';
 import { storage } from '@/lib/storage';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings } from 'lucide-react';
+import SettingsPage from '@/components/settings/SettingsPage';
 
 const ExpenseTracker: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -76,24 +75,7 @@ const ExpenseTracker: React.FC = () => {
         );
       
       case 'settings':
-        return (
-          <Card className="shadow-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center py-8">
-              <p className="text-muted-foreground">
-                Settings coming soon! 🚧
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Features like categories management, data export, and theme settings will be available here.
-              </p>
-            </CardContent>
-          </Card>
-        );
+        return <SettingsPage />;
       
       default:
         return <div>Page not found</div>;

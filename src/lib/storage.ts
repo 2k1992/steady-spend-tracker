@@ -75,6 +75,42 @@ export const storage = {
     categories.push(category);
     this.saveCategories(categories);
   },
+
+  // Backup and Restore
+  exportData(): string {
+    const transactions = this.getTransactions();
+    const categories = this.getCategories();
+    const data = {
+      transactions,
+      categories,
+      exportDate: new Date().toISOString(),
+      version: '1.0'
+    };
+    return JSON.stringify(data, null, 2);
+  },
+
+  importData(jsonData: string): { success: boolean; message: string } {
+    try {
+      const data = JSON.parse(jsonData);
+      
+      if (!data.transactions || !data.categories) {
+        return { success: false, message: 'Invalid backup file format' };
+      }
+
+      // Validate and convert transactions
+      const transactions = data.transactions.map((t: any) => ({
+        ...t,
+        date: new Date(t.date),
+      }));
+
+      this.saveTransactions(transactions);
+      this.saveCategories(data.categories);
+      
+      return { success: true, message: 'Data imported successfully' };
+    } catch (error) {
+      return { success: false, message: 'Failed to import data. Please check the file format.' };
+    }
+  },
 };
 
 function getDefaultCategories(): Category[] {
@@ -93,5 +129,9 @@ function getDefaultCategories(): Category[] {
     { id: '9', name: 'Bills', icon: 'Receipt', color: '#7f1d1d', type: 'expense' },
     { id: '10', name: 'Health', icon: 'Heart', color: '#dc2626', type: 'expense' },
     { id: '11', name: 'Other Expense', icon: 'Minus', color: '#991b1b', type: 'expense' },
+    
+    // Lending categories
+    { id: '12', name: 'Money Lent', icon: 'ArrowUpRight', color: '#f59e0b', type: 'lent' },
+    { id: '13', name: 'Money Borrowed', icon: 'ArrowDownLeft', color: '#8b5cf6', type: 'borrowed' },
   ];
 }
